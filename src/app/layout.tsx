@@ -9,7 +9,10 @@ import {
 } from "@/components/ui/sidebar"
 
 export const metadata: Metadata = {
-  title: "All4Pets - Home",
+  title: {
+    template: '%s | All4Pets',
+    default: 'All4Pets System',
+  },
   description: "Clínica Veterinária",
 };
 
