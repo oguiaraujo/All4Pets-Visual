@@ -1,7 +1,4 @@
 import { ProductTable } from '@/components/products/ProductTable';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
-import Link from 'next/link';
 
 interface Product {
   id: string; 
@@ -35,20 +32,8 @@ export default async function ProductsPage() {
   const products = await getProducts();
 
  return (
-    <div className="container mx-auto py-10">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Listagem de Produtos</h1>
-        
-        <Link href="/products/create" passHref>
-          <Button>Novo Produto</Button>
-        </Link>
-      </div>
-
-      {products.length === 0 ? (
-        <p className="text-center text-gray-500">Nenhum produto encontrado. Comece a cadastrar!</p>
-      ) : (
-        <ProductTable data={products} />
-      )}
+    <div className="container mx-auto h-full w-full pt-10 pb-10">
+      <ProductTable data={products} />
     </div>
   );
 }

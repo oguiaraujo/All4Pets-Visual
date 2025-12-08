@@ -1,9 +1,7 @@
 import { ProductForm } from '@/components/products/ProductForm';
 
-// Garante que a página sempre busque dados frescos
 export const dynamic = 'force-dynamic';
 
-// 1. Definição da Interface do Produto
 interface Product {
   id: string;
   codigo: string; 
@@ -15,10 +13,9 @@ interface Product {
   data_validade: string;
 }
 
-// 2. Definição das Props da Página
 interface EditProductPageProps {
   params: {
-    id: string; // O ID da URL é injetado aqui pelo Next.js
+    id: string;
   };
 }
 
@@ -70,10 +67,9 @@ export default async function EditProductPage(props: EditProductPageProps) {
     );
   }
 
-  // Renderiza o formulário com os dados carregados
   return (
     <div className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-6">Editar Produto: {product.nome}</h1>
+      
       <ProductForm initialData={product} /> 
     </div>
   );

@@ -16,6 +16,13 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useToast } from  "@/hooks/use-toast"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
 
 
 interface Product {
@@ -132,115 +139,127 @@ export function ProductForm({ initialData }: ProductFormProps) {
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          
-          <FormField
-            control={form.control}
-            name="codigo"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Código</FormLabel>
-                <FormControl>
-                  <Input placeholder="A001" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+    <Card>
+        <CardHeader>
+            <CardTitle className="text-2xl font-bold">
+                {initialData ? `Editar Produto: ${initialData.nome}` : 'Cadastrar Novo Produto'}
+            </CardTitle>
+            <CardDescription>
+                {initialData ? 'Preencha os campos abaixo para atualizar as informações do produto.' : 'Insira os detalhes do novo produto no formulário abaixo.'}
+            </CardDescription>
+        </CardHeader>
+        <CardContent>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        <FormField
+                            control={form.control}
+                            name="codigo"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Código</FormLabel>
+                                <FormControl>
+                                <Input placeholder="A001" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
 
-          <FormField
-            control={form.control}
-            name="nome"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nome</FormLabel>
-                <FormControl>
-                  <Input placeholder="Ração para Cachorros" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="categoria"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Categoria</FormLabel>
-                <FormControl>
-                  <Input placeholder="Alimento, Medicamento" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                        <FormField
+                            control={form.control}
+                            name="nome"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Nome</FormLabel>
+                                <FormControl>
+                                <Input placeholder="Ração para Cachorros" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="categoria"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Categoria</FormLabel>
+                                <FormControl>
+                                <Input placeholder="Alimento, Medicamento" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
 
-          <FormField
-            control={form.control}
-            name="preco"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Preço (R$)</FormLabel>
-                <FormControl>
-                  <Input type="number" step="0.01" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                        <FormField
+                            control={form.control}
+                            name="preco"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Preço (R$)</FormLabel>
+                                <FormControl>
+                                <Input type="number" step="0.01" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
 
-          <FormField
-            control={form.control}
-            name="estoque"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Estoque</FormLabel>
-                <FormControl>
-                  <Input type="number" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                        <FormField
+                            control={form.control}
+                            name="estoque"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Estoque</FormLabel>
+                                <FormControl>
+                                <Input type="number" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
 
-          <FormField
-            control={form.control}
-            name="data_validade"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Data de Validade (AAAA-MM-DD)</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} /> 
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                        <FormField
+                            control={form.control}
+                            name="data_validade"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Data de Validade (AAAA-MM-DD)</FormLabel>
+                                <FormControl>
+                                <Input type="date" {...field} /> 
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
 
-        </div>
+                    </div>
 
-        <FormField
-          control={form.control}
-          name="descricao"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Descrição</FormLabel>
-              <FormControl>
-                <Textarea placeholder="Detalhes do produto" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <Button type="submit" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting 
-            ? 'Salvando...' 
-            : initialData ? 'Salvar Edição' : 'Cadastrar Produto'}
-        </Button>
-      </form>
-    </Form>
+                    <FormField
+                        control={form.control}
+                        name="descricao"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Descrição</FormLabel>
+                            <FormControl>
+                                <Textarea placeholder="Detalhes do produto" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    
+                    <Button type="submit" disabled={form.formState.isSubmitting}>
+                        {form.formState.isSubmitting 
+                            ? 'Salvando...' 
+                            : initialData ? 'Salvar Edição' : 'Cadastrar Produto'}
+                    </Button>
+                </form>
+            </Form>
+        </CardContent>
+    </Card>
   );
 }
