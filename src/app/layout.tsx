@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
 import { AppSidebar } from "@/components/app-sidebar"
 import { Separator } from "@/components/ui/separator"
@@ -9,9 +10,21 @@ import {
 } from "@/components/ui/sidebar"
 
 export const metadata: Metadata = {
-  title: "All4Pets - Home",
+  title: {
+    template: '%s | All4Pets',
+    default: 'All4Pets System',
+  },
   description: "Clínica Veterinária",
 };
+
+function LoadingSkeleton() {
+  return(
+    <div className="flex h-full w-full flex-col gap-4 rounded-xl border bg-card p-6 shadow-sm">
+      <div className="h-8 w-1/3 animate-pulse rounded-md bg-muted" />
+      <div className="flex-1 animate-pulse rounded-md bg-muted/50" />
+    </div>
+  )
+}
 
 export default function RootLayout({
   children,
@@ -31,9 +44,11 @@ export default function RootLayout({
               </div>
             </header>
 
-            <div className="flex flex-col flex-1 gap-4 p-4 overflow-hidden">
-              {children}
-            </div>
+            <main className="flex flex-1 flex-col gap-4 p-4 overflow-hidden">
+              <Suspense fallback={<LoadingSkeleton />}>
+                {children}
+              </Suspense>
+            </main>
 
           </SidebarInset>
         </SidebarProvider>
