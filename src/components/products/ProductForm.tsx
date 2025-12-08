@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useForm } from 'react-hook-form';
@@ -55,9 +54,13 @@ export function ProductForm({ initialData }: ProductFormProps) {
 
   const defaultValues: ProductFormValues = initialData
     ? {
-        ...initialData,
-        preco: Number(initialData.preco),
-        estoque: Number(initialData.estoque), 
+        codigo: initialData.codigo ?? '', 
+        nome: initialData.nome ?? '',
+        descricao: initialData.descricao ?? '',
+        categoria: initialData.categoria ?? '',
+        data_validade: initialData.data_validade ?? new Date().toISOString().split('T')[0],
+        preco: Number(initialData.preco ?? 0),
+        estoque: Number(initialData.estoque ?? 0), 
       }
     : {
         codigo: '', 
