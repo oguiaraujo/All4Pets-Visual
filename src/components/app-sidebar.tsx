@@ -39,7 +39,7 @@ const data = {
     },
     {
       title: "Produtos",
-      url: "#",
+      url: "/products",
       icon: PillBottle,
     },
 
