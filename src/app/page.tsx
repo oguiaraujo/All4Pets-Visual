@@ -1,3 +1,7 @@
+import Link from 'next/link';
+import { Button } from "@/components/ui/button"; 
+import { Package } from 'lucide-react'; 
+
 import {
   Card,
   CardContent,
@@ -9,18 +13,18 @@ import {
 
 export default function Home() {
   return (
-    <Card className="flex flex-col flex-1 h-full w-full overflow-hidden shadow-sm">
-    <CardHeader>
-      <CardTitle>Card Title</CardTitle>
-      <CardDescription>Card Description</CardDescription>
-    </CardHeader>
-    <CardContent>
-      <p>Content</p>
-    </CardContent>
-    <CardFooter>
-      <p>Card Footer</p>
-    </CardFooter>
-  </Card>
+    <main className="flex min-h-screen items-center justify-center p-4"> 
+      <Card className="w-[400px] shadow-lg">
+        <CardHeader>
+          <CardTitle>Sistema All4Pets</CardTitle>
+          <CardDescription>Bem-vindo ao sistema de gerenciamento.</CardDescription>
+        </CardHeader>
+        <CardContent>
+        </CardContent>
+        <CardFooter className="flex justify-center">
+        </CardFooter>
+      </Card>
+    </main>
 
   );
 }
