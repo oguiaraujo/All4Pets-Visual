@@ -23,6 +23,8 @@ import {
   CardDescription,
 } from '@/components/ui/card'; 
 
+import { deleteProductAction } from '@/actions/product'; 
+
 interface Product {
   id: string;
   codigo: string; 
@@ -34,14 +36,13 @@ interface Product {
   estoque: number;
 }
 
-interface ProductTableProps {
+export interface ProductTableProps {
   data: Product[];
 }
 
 export function ProductTable({ data }: ProductTableProps) {
   const router = useRouter();
   const { toast } = useToast();
-  const API_URL_BASE = `${process.env.NEXT_PUBLIC_API_BASE_URL}/products`;
   
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -64,22 +65,12 @@ export function ProductTable({ data }: ProductTableProps) {
     }
 
     try {
-      const res = await fetch(`${API_URL_BASE}/${id}/`, { 
-        method: 'DELETE', 
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error(`Falha ao desativar produto: ${res.statusText}`);
-      }
+      await deleteProductAction(id); 
 
       toast({
         title: 'Sucesso',
         description: 'Produto desativado com sucesso!',
       });
-      router.refresh(); 
 
     } catch (error) {
       console.error("Erro ao excluir:", error);

@@ -1,7 +1,6 @@
 "use client";
 
 import { useForm } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -23,6 +22,7 @@ import {
   CardTitle,
   CardDescription,
 } from '@/components/ui/card';
+import { saveProductAction } from '@/actions/product';
 
 
 interface Product {
@@ -54,10 +54,7 @@ const formSchema = z.object({
 type ProductFormValues = z.infer<typeof formSchema>;
 
 export function ProductForm({ initialData }: ProductFormProps) {
-  const router = useRouter();
   const { toast } = useToast();
-
-  const API_URL_BASE = `${process.env.NEXT_PUBLIC_API_BASE_URL}/products`;
 
   const defaultValues: ProductFormValues = initialData
     ? {
@@ -84,49 +81,15 @@ export function ProductForm({ initialData }: ProductFormProps) {
     defaultValues,
   });
 
-  const onSubmit = async (values: ProductFormValues) => {
-    const isEditing = !!initialData;
-    const method = isEditing ? 'PUT' : 'POST';
-    const url = isEditing ? `${API_URL_BASE}/${initialData.id}/` : `${API_URL_BASE}/`; 
-    
-    
-    const payload = {
-        ...values,
-        preco: String(values.preco),
-        estoque: String(values.estoque), 
-    };
-    
-
-    if (!isEditing) {
-    }
-
+  const handleClientSubmit = form.handleSubmit(async (values: ProductFormValues) => {
     try {
-      const res = await fetch(url, {
-        method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+      await saveProductAction({ ...values, id: initialData?.id });
 
-      if (!res.ok) {
-        
-        if (res.status === 400) {
-            const errorData = await res.json();
-            const errorMessage = JSON.stringify(errorData); 
-            throw new Error(`Erro de validação: ${errorMessage}`);
-        }
-        throw new Error(`Falha ao ${isEditing ? 'editar' : 'cadastrar'} produto: ${res.status} ${res.statusText}`);
-      }
-
-      const action = isEditing ? 'editado' : 'cadastrado';
+      const action = initialData ? 'editado' : 'cadastrado';
       toast({
         title: 'Sucesso',
         description: `Produto ${action} com sucesso!`,
       });
-
-      router.push('/products');
-      router.refresh();
 
     } catch (error) {
       console.error(error);
@@ -136,7 +99,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
         variant: 'destructive',
       });
     }
-  };
+  });
 
   return (
     <Card>
@@ -150,7 +113,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
         </CardHeader>
         <CardContent>
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <form onSubmit={handleClientSubmit} className="space-y-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         
                         <FormField

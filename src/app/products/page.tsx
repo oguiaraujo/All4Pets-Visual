@@ -1,7 +1,7 @@
 import { ProductTable } from '@/components/products/ProductTable';
-
 interface Product {
   id: string; 
+  codigo: string; 
   nome: string;     
   descricao: string; 
   preco: number;
@@ -14,7 +14,7 @@ async function getProducts(): Promise<Product[]> {
   const API_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/products`;
   try {
     const res = await fetch(API_URL, {
-      next: { revalidate: 0 } 
+      next: { revalidate: 60 } 
     });
 
     if (!res.ok) {
@@ -31,7 +31,7 @@ async function getProducts(): Promise<Product[]> {
 export default async function ProductsPage() {
   const products = await getProducts();
 
- return (
+  return (
     <div className="container mx-auto h-full w-full pt-10 pb-10">
       <ProductTable data={products} />
     </div>
