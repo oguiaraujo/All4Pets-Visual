@@ -1,5 +1,7 @@
 "use client"
 
+import Link from 'next/link'; 
+import { usePathname } from 'next/navigation'; 
 import { type LucideIcon } from "lucide-react"
 
 import {
@@ -20,33 +22,44 @@ export function NavMain({
     title: string
     url: string
     icon?: LucideIcon
-    isActive?: boolean
     items?: {
       title: string
       url: string
     }[]
   }[]
 }) {
+  const pathname = usePathname();
+
   return (
     <SidebarGroup>
       <SidebarMenu>
-        {items.map((item) => (
-          <Collapsible
-            key={item.title}
-            asChild
-            defaultOpen={item.isActive}
-            className="group/collapsible"
-          >
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title}>
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-            </SidebarMenuItem>
-          </Collapsible>
-        ))}
+        {items.map((item) => {
+          const isActive = item.url === '/' 
+            ? pathname === '/' 
+            : pathname.startsWith(item.url);
+
+          return (
+            <Collapsible
+              key={item.title}
+              asChild
+              defaultOpen={isActive} 
+              className="group/collapsible"
+            >
+              <SidebarMenuItem>
+                <Link href={item.url} className="w-full">
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton 
+                      tooltip={item.title}
+                      isActive={isActive}
+                    >
+                      {item.icon && <item.icon />}
+                      <span>{item.title}</span>
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                </Link>
+              </SidebarMenuItem>
+            </Collapsible>
+          )})}
       </SidebarMenu>
     </SidebarGroup>
   )
