@@ -98,26 +98,6 @@ export function ServiceFormModal({ isOpen, onClose, service, onSave }: ServiceFo
                 placeholder="Ex: Banho Completo"
               />
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="category">Categoria *</Label>
-              <Select
-                value={formData.category}
-                onValueChange={(value) => handleChange('category', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Banho">Banho</SelectItem>
-                  <SelectItem value="Tosa">Tosa</SelectItem>
-                  <SelectItem value="Consulta">Consulta</SelectItem>
-                  <SelectItem value="Vacinação">Vacinação</SelectItem>
-                  <SelectItem value="Hospedagem">Hospedagem</SelectItem>
-                  <SelectItem value="Outros">Outros</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

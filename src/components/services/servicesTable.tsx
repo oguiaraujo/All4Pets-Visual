@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { MoreHorizontal, Edit, Trash2, Plus, Search } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -13,12 +13,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
   Card,
   CardContent,
   CardDescription,
@@ -26,46 +20,46 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { ServiceFormModal } from './serviceFormModal';
-
-interface Service {
-  id: number;
-  name: string;
-  price: number;
-  duration: number;
-  category: string;
-  description?: string;
-}
-
-const initialServices: Service[] = [
-  { id: 1, name: 'Banho Completo', price: 60.00, duration: 60, category: 'Banho', description: 'Banho completo com shampoo especial' },
-  { id: 2, name: 'Tosa Higiênica', price: 45.00, duration: 45, category: 'Tosa', description: 'Tosa na região íntima e patas' },
-  { id: 3, name: 'Consulta Veterinária', price: 120.00, duration: 30, category: 'Consulta', description: 'Consulta com veterinário' },
-  { id: 4, name: 'Banho e Tosa', price: 90.00, duration: 90, category: 'Banho', description: 'Pacote completo' },
-  { id: 5, name: 'Vacinação', price: 80.00, duration: 20, category: 'Consulta', description: 'Aplicação de vacinas' },
-];
+import { servicesApi, Service } from '@/components/services/api'; // ← Importar da API
 
 export function ServicesTable() {
-  const [services, setServices] = useState<Service[]>(initialServices);
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('Todas');
 
-  const filteredServices = services.filter(service => {
-    const matchesSearch = service.name.toLowerCase().includes(search.toLowerCase()) ||
-                         (service.description?.toLowerCase() || '').includes(search.toLowerCase());
-    const matchesCategory = selectedCategory === 'Todas' || service.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  // Carregar serviços da API
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const fetchServices = async () => {
+    try {
+      const data = await servicesApi.getAll();
+      setServices(data);
+    } catch (error) {
+      console.error('Erro ao buscar serviços:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleEdit = (service: Service) => {
     setEditingService(service);
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (confirm('Tem certeza que deseja excluir este serviço?')) {
-      setServices(services.filter(service => service.id !== id));
+      try {
+        await servicesApi.delete(id);
+        setServices(services.filter(service => service.id !== id));
+      } catch (error) {
+        console.error('Erro ao excluir serviço:', error);
+        alert('Erro ao excluir serviço');
+      }
     }
   };
 
@@ -74,17 +68,44 @@ export function ServicesTable() {
     setIsModalOpen(true);
   };
 
-  const handleSave = (serviceData: Service) => {
-    if (editingService) {
-      setServices(services.map(service => 
-        service.id === serviceData.id ? serviceData : service
-      ));
-    } else {
-      setServices([...services, { ...serviceData, id: Date.now() }]);
+  const handleSave = async (serviceData: Service) => {
+    try {
+      if (editingService) {
+        // Atualizar
+        const updated = await servicesApi.update(serviceData.id, serviceData);
+        setServices(services.map(s => s.id === serviceData.id ? updated : s));
+      } else {
+        // Criar
+        const newService = await servicesApi.create(serviceData);
+        setServices([...services, newService]);
+      }
+    } catch (error) {
+      console.error('Erro ao salvar serviço:', error);
+      alert('Erro ao salvar serviço');
     }
   };
 
+  // Filtros (mantém local)
+  const filteredServices = services.filter(service => {
+    const matchesSearch = service.name.toLowerCase().includes(search.toLowerCase()) ||
+                         (service.description?.toLowerCase() || '').includes(search.toLowerCase());
+    const matchesCategory = selectedCategory === 'Todas' || service.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
   const categories = ['Todas', ...new Set(services.map(s => s.category))];
+
+  if (loading) {
+    return (
+      <div className="p-6">
+        <Card>
+          <CardContent className="py-8">
+            <div className="text-center">Carregando serviços...</div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6">
@@ -98,7 +119,7 @@ export function ServicesTable() {
               </CardDescription>
             </div>
             
-            <Button onClick={handleAdd} className="default">
+            <Button onClick={handleAdd} variant="default">
               <Plus className="h-4 w-4 mr-2" />
               Novo Serviço
             </Button>
@@ -118,21 +139,6 @@ export function ServicesTable() {
             </div>
           </div>
 
-          <div className="mb-4">
-            <div className="flex flex-wrap gap-2">
-              {categories.map(category => (
-                <Button
-                  key={category}
-                  variant={selectedCategory === category ? "default" : "outline"}
-                  onClick={() => setSelectedCategory(category)}
-                  size="sm"
-                  className="text-xs"
-                >
-                  {category}
-                </Button>
-              ))}
-            </div>
-          </div>
 
           <div className="border rounded-lg overflow-hidden">
             <Table>
@@ -140,7 +146,6 @@ export function ServicesTable() {
                 <TableRow>
                   <TableHead className="w-16">ID</TableHead>
                   <TableHead>NOME</TableHead>
-                  <TableHead className="w-32">CATEGORIA</TableHead>
                   <TableHead className="w-24">DURAÇÃO</TableHead>
                   <TableHead className="w-32">PREÇO</TableHead>
                   <TableHead className="w-24 text-right">AÇÕES</TableHead>
@@ -161,16 +166,7 @@ export function ServicesTable() {
                           )}
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <span className={`px-2 py-1 rounded-full text-xs ${
-                          service.category === 'Banho' ? 'bg-blue-100 text-blue-800' :
-                          service.category === 'Tosa' ? 'bg-purple-100 text-purple-800' :
-                          service.category === 'Consulta' ? 'bg-green-100 text-green-800' :
-                          'bg-gray-100 text-gray-800'
-                        }`}>
-                          {service.category}
-                        </span>
-                      </TableCell>
+                      
                       <TableCell>{service.duration} min</TableCell>
                       <TableCell>
                         <span className="font-semibold">
@@ -202,7 +198,7 @@ export function ServicesTable() {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-8 text-gray-500">
-                      Nenhum serviço encontrado
+                      {services.length === 0 ? 'Nenhum serviço cadastrado' : 'Nenhum serviço encontrado'}
                     </TableCell>
                   </TableRow>
                 )}
