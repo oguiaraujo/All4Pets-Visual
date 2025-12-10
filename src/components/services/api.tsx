@@ -13,14 +13,14 @@ export interface Service {
 export const servicesApi = {
   // GET todos os serviços
   getAll: async (): Promise<Service[]> => {
-    const response = await fetch(`${API_URL}/api/services/`);
+    const response = await fetch(`${API_URL}/services/`);
     if (!response.ok) throw new Error('Erro ao buscar serviços');
     return response.json();
   },
 
   // GET um serviço
   getById: async (id: number): Promise<Service> => {
-    const response = await fetch(`${API_URL}/api/services/${id}/`);
+    const response = await fetch(`${API_URL}/services/${id}/`);
     return response.json();
   },
 
@@ -28,7 +28,7 @@ export const servicesApi = {
   create: async (data: any): Promise<Service> => {
   console.log('Enviando para API:', data);
   
-  const response = await fetch(`${API_URL}/api/services/`, {
+  const response = await fetch(`${API_URL}/services/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ export const servicesApi = {
 
   // PUT atualizar serviço
   update: async (id: number, data: Partial<Service>): Promise<Service> => {
-    const response = await fetch(`${API_URL}/api/services/${id}/`, {
+    const response = await fetch(`${API_URL}/services/${id}/`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ export const servicesApi = {
 
   // DELETE serviço
   delete: async (id: number): Promise<boolean> => {
-    const response = await fetch(`${API_URL}/api/services/${id}/`, {
+    const response = await fetch(`${API_URL}/services/${id}/`, {
       method: 'DELETE',
     });
     return response.ok;
