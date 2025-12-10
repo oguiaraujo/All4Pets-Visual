@@ -34,7 +34,7 @@ const data = {
     },
     {
       title: "Serviços",
-      url: "#",
+      url: "/services",
       icon: Workflow,
     },
     {
